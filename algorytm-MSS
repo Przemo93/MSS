@@ -1,0 +1,26 @@
+N + 1 procesów (N feministek + 1 organizacja mizoginów)
+
+Feministka:
+1. wylosowanie nowej lokalizacji
+2. broadcast o wybranej lokalizacji
+    w wiadomości wysyłane są: wartość zegara Lamporta i ID lokalizacji
+3. /* oczekiwanie na odbiór N-1 wiadomości od pozostałych feministek */
+    tworzenie rejestru kolejkowego, ustalenie własnej pozycji w kolejce
+    na podstawie odebranych wiadomości
+4. aktywne oczekiwanie na broadcast organizacji mizoginów
+    sprawdzanie, czy nie stoi za długo w jednej lokalizacji- jeśli tak, to goto 1.
+5. po odebraniu:
+    a) sprawdzenie, czy prelekcja jest w tej samej lokalizacji, co ja
+    b) jeśli tak, to sprawdzenie, czy jej numer w kolejce jest wystarczająco niski
+    wersja UDZIAŁ:  - wzięcie udziału w rozgonieniu szowinistycznych świń
+                    - print...
+                    - goto 1.
+                    
+    wersja NUDA:    - goto 4.
+    
+
+Organizacja mizoginów:
+1. ustalenie liczby uczestników i lokalizacji
+2. oczekiwanie 15-45 sekund
+3. broadcast z informacją o prelekcji
+4. goto 1.
