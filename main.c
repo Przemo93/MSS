@@ -12,12 +12,17 @@
 #define AKCJA 3
 
 //#define max(x,y) (((x) < (y)) ? (y) : (x))
-#define min(x,y) (((x) < (y)) ? (x) : (y))
+//#define min(x,y) (((x) < (y)) ? (x) : (y))
 
 int max(int a, int b) 
 {
     if (a>b) return a;
     return b;
+}
+
+int min(int a, int b){
+    if(a>b) return b;
+    return a;
 }
 
 int main(int argc, char** argv)
@@ -39,8 +44,8 @@ int main(int argc, char** argv)
             prelekcja[0] = rand()%3;
             prelekcja[1] = rand()%MAX_LICZBA_UCZESTNIKOW + 1;
             nr_prelekcji++;
-            //czas_oczekiwania = rand()%30 + 15; 
-            czas_oczekiwania = 10;
+            czas_oczekiwania = rand()%30 + 15; 
+            //czas_oczekiwania = 15;
             //printf("## Czekam %d sekund.\n", czas_oczekiwania);
             sleep(czas_oczekiwania);
             printf("## Prelekcja %d. Miejsce: %d. Liczebnosc: %d.\n", nr_prelekcji, prelekcja[0], prelekcja[1]);
@@ -186,6 +191,7 @@ int main(int argc, char** argv)
                     //for(i=0; i<size; i++) if(lokalizacje_siostr[i] == feministka[0]) ile_poszlo++;
                     //if(ile_poszlo > buf[1]) ile_poszlo = buf[1];
                     //miejsce_w_kolejce-=ile_poszlo;
+                    printf("%d:%d WTF?\n", rank, feministka[1]);
                     for(i=0; i< liczba_uczestniczek; i++){
                         MPI_Recv(buf, 2, MPI_INT, MPI_ANY_SOURCE, KOLEJKA, MPI_COMM_WORLD, &status);
                         lokalizacje_siostr[status.MPI_SOURCE] = buf[0];
