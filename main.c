@@ -13,6 +13,13 @@
 
 #define max(x,y) (((x) < (y)) ? (y) : (x))
 
+void narodziny(){
+    feministka[0] = rand()%3;
+    feministka[1] = 0;
+    printf(">> %d:%d Narodziny. Ustawie sie w miejscu numer %d! \n", rank, feministka[1], feministka[0]);
+    poziom_znudzenia = 0;
+}
+
 int main(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
@@ -22,7 +29,7 @@ int main(int argc, char** argv)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
     //MIZOGIN
-	if(rank==0){
+    if(rank==0){
         srand(time(NULL));
         sleep(3);
         int prelekcja[2]; // 0 to kolejna lokacja, 1 to liczba uczestnikow
@@ -42,8 +49,8 @@ int main(int argc, char** argv)
 	}
 
 
-	//FEMINISTKI
-	else{
+    //FEMINISTKI
+    else{
         int feministka[2]; //0 to lokacja, 1 to wartosc zegara Lamporta
 	int lokalizacje_siostr[size]; for(i=0; i<size; i++) lokalizacje_siostr[i]=0;
 	int odebrane = 0;
@@ -51,12 +58,11 @@ int main(int argc, char** argv)
         int miejsce_w_kolejce = 1;
         int poziom_znudzenia=0;
         int ile_poszlo=0;
-        feministka[1] = 0; 
+        
+        narodziny();
+        
         while(1==1){
             srand(time(NULL) + rank);
-            feministka[0] = rand()%3;
-            printf(">> %d: Urodzilam sie. Ustawie sie w miejscu numer %d! \n", rank, feministka[0]);
-            poziom_znudzenia = 0;
             feministka[1]++;
             for(i=1; i<size; i++){
                 if(i==rank) continue;
@@ -90,27 +96,29 @@ int main(int argc, char** argv)
                     }
                 }
             }
-            //printf(">> %d: moje miejsce w kolejce: %d\n", rank, miejsce_w_kolejce);
+            printf(">> %d:%d moje miejsce w kolejce: %d\n", rank, feministka[1], miejsce_w_kolejce);
             //for(i=1; i<size; i++) printf("> %d: lok_siostr[%d]=%d\n", rank, i, lokalizacje_siostr[i]);
             
             if(poziom_znudzenia >= 3){
-                printf(">> %d: Znudzilam sie i umre.\n", rank);
+                feministka[1]++;
+                printf(">> %d:%d Znudzilam sie i umre.\n", rank, feministka[1]);
                 continue;
             }
             
             //odebranie broadcastu mizoginow
             MPI_Recv(buf, 2, MPI_INT, MPI_ANY_SOURCE, OGLOSZENIE, MPI_COMM_WORLD, &status);
+            feministka[1] = max(buf[1], feministka[1]);
             // printf(">> %d: wiem ze mizoginow bedzie %d w miejscu %d\n", rank, buf[1], buf[0]);
                     
             odebrane = 0;
             ile_poszlo=0;
                     
-            printf(">> %d: stoje jako %d. w lokalizacji %d.\n   Najblizsze miejsce:   %d,  czlonkow: %d.\n", rank, miejsce_w_kolejce, feministka[0], buf[0], buf[1]);            
+            printf(">> %d:%d stoje jako %d. w lokalizacji %d.\n   Najblizsza prelekcja: %d, czlonkow: %d.\n", rank, feministka[1], miejsce_w_kolejce, feministka[0], buf[0], buf[1]);            
             if(feministka[0] == buf[0]){
                 //printf(">> %d: Jestem tam, gdzie bedzie prelekcja!\n", rank);
                 if(miejsce_w_kolejce <= buf[1]){
                     sleep(1);
-                    printf(">> %d: Ide siac spustoszenie.\n", rank);
+                    printf(">> %d:%d Ide siac spustoszenie.\n", rank, feministka[1]);
                     poziom_znudzenia=0;
                     sleep(1);
                     //ta idzie do domu i sie odradza, i spoko
@@ -119,7 +127,7 @@ int main(int argc, char** argv)
                     for(i=0; i<size; i++) if(lokalizacje_siostr[i] == feministka[0]) ile_poszlo++;
                     if(ile_poszlo > buf[1]) ile_poszlo = buf[1];
                     miejsce_w_kolejce-=ile_poszlo;
-                    printf(">> %d: Zostaje w kolejce na %d. Moje obecne miejsce: %d.\n", rank, feministka[0], miejsce_w_kolejce);
+                    printf(">> %d:%d Zostaje w kolejce na %d. Moje obecne miejsce: %d.\n", rank, feministka[1], feministka[0], miejsce_w_kolejce);
                     //ta tez sie teraz odradza, a powinna kurde czekac
                     sleep(3);
                 }
