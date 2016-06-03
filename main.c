@@ -13,13 +13,6 @@
 
 #define max(x,y) (((x) < (y)) ? (y) : (x))
 
-void narodziny(){
-    feministka[0] = rand()%3;
-    feministka[1] = 0;
-    printf(">> %d:%d Narodziny. Ustawie sie w miejscu numer %d! \n", rank, feministka[1], feministka[0]);
-    poziom_znudzenia = 0;
-}
-
 int main(int argc, char** argv)
 {
     MPI_Init(&argc, &argv);
@@ -58,9 +51,10 @@ int main(int argc, char** argv)
         int miejsce_w_kolejce = 1;
         int poziom_znudzenia=0;
         int ile_poszlo=0;
-        
-        narodziny();
-        
+        feministka[1] = 0;
+        feministka[0] = rand()%3;
+        printf(">> %d:%d Narodziny. Ustawie sie w miejscu numer %d. \n", rank, feministka[1], feministka[0]);
+        poziom_znudzenia = 0;
         while(1==1){
             srand(time(NULL) + rank);
             feministka[1]++;
