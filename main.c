@@ -27,10 +27,12 @@ int main(int argc, char** argv)
         sleep(3);
         int prelekcja[2]; // 0 to kolejna lokacja, 1 to liczba uczestnikow
         int czas_oczekiwania = rand()%30 + 15;
+        int nr_prelekcji=0;
         while(1==1){
             prelekcja[0] = rand()%3;
             prelekcja[1] = rand()%MAX_LICZBA_UCZESTNIKOW + 1;
-            printf("## Lokacja prelekcji to: %d. Bedzie nas %d.\n", prelekcja[0], prelekcja[1]);
+            nr_prelekcji++;
+            printf("## Prelekcja %d. Miejsce: %d. Liczebnosc: %d.\n", nr_prelekcji, prelekcja[0], prelekcja[1]);
             //czas_oczekiwania = rand()%30 + 15; 
             czas_oczekiwania = 10;
             //printf("## Czekam %d sekund.\n", czas_oczekiwania);
@@ -39,7 +41,7 @@ int main(int argc, char** argv)
                 MPI_Send(prelekcja, 2, MPI_INT, i, OGLOSZENIE, MPI_COMM_WORLD);
             }
         }
-	}
+    }
 
 
     //FEMINISTKI
@@ -67,7 +69,6 @@ int main(int argc, char** argv)
             lokalizacje_siostr[rank]=feministka[0];
             while(odebrane < size-2){
                 MPI_Recv(buf, 2, MPI_INT, MPI_ANY_SOURCE, KOLEJKA, MPI_COMM_WORLD, &status);
-                feministka[1] = max(buf[1], feministka[1]);
                 odebrane++;
                 lokalizacje_siostr[status.MPI_SOURCE]=buf[0];
                 if(feministka[0] == buf[0]){
@@ -89,33 +90,38 @@ int main(int argc, char** argv)
                         }
                     }
                 }
+                feministka[1] = max(buf[1], feministka[1]);
             }
-            printf(">> %d:%d moje miejsce w kolejce: %d\n", rank, feministka[1], miejsce_w_kolejce);
+            printf(">> %d:%d Moje miejsce w kolejce: %d\n", rank, feministka[1], miejsce_w_kolejce);
             //for(i=1; i<size; i++) printf("> %d: lok_siostr[%d]=%d\n", rank, i, lokalizacje_siostr[i]);
             
             if(poziom_znudzenia >= 3){
                 feministka[1]++;
-                printf(">> %d:%d Znudzilam sie i umre.\n", rank, feministka[1]);
+                feministka[0]=rand()%3;
+                printf(">> %d:%d Umieram z nudow. Moje nowe miejsce: %d.\n", rank, feministka[1], feministka[0]);
+                poziom_znudzenia=0;
                 continue;
             }
             
             //odebranie broadcastu mizoginow
             MPI_Recv(buf, 2, MPI_INT, MPI_ANY_SOURCE, OGLOSZENIE, MPI_COMM_WORLD, &status);
-            feministka[1] = max(buf[1], feministka[1]);
             // printf(">> %d: wiem ze mizoginow bedzie %d w miejscu %d\n", rank, buf[1], buf[0]);
-                    
-            odebrane = 0;
+            
             ile_poszlo=0;
                     
-            printf(">> %d:%d stoje jako %d. w lokalizacji %d.\n   Najblizsza prelekcja: %d, czlonkow: %d.\n", rank, feministka[1], miejsce_w_kolejce, feministka[0], buf[0], buf[1]);            
+            printf(">> %d:%d Stoje jako %d. w lokalizacji %d.\n   Najblizsza prelekcja: %d, czlonkow: %d.\n", rank, feministka[1], miejsce_w_kolejce, feministka[0], buf[0], buf[1]);            
             if(feministka[0] == buf[0]){
                 //printf(">> %d: Jestem tam, gdzie bedzie prelekcja!\n", rank);
                 if(miejsce_w_kolejce <= buf[1]){
                     sleep(1);
                     printf(">> %d:%d Ide siac spustoszenie.\n", rank, feministka[1]);
-                    poziom_znudzenia=0;
                     sleep(1);
-                    //ta idzie do domu i sie odradza, i spoko
+                    feministka[1]++;
+                    printf(">> %d:%d Szowinistyczne swinie!\n", rank, feministka[1]);
+                    srand(time(NULL) + rank);
+                    feministka[0]=rand()%3;
+                    poziom_znudzenia=0;
+                    printf(">> %d:%d Wracam do gry. Moje nowe miejsce: %d.\n", rank, feministka[1], feministka[0]);
                 }
                 else{
                     for(i=0; i<size; i++) if(lokalizacje_siostr[i] == feministka[0]) ile_poszlo++;
@@ -128,7 +134,7 @@ int main(int argc, char** argv)
             }
             else{
                 poziom_znudzenia++;
-                printf(">> %d: Tu sie nic nie dzieje... nudno na: %d\n", rank, poziom_znudzenia);
+                printf(">> %d:%d Tu sie nic nie dzieje... nuda %d/3.\n", rank, feministka[1], poziom_znudzenia);
             }
         }
     }
