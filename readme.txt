@@ -4,11 +4,12 @@ lamboot
 
 kompilacja programów w MPI ($ oznacza znak prompta; nie wpisuj tego znaku)
     
-    $ mpicc program.c -o program.exe
+    $ mpicc main.c -o main
 
 Uruchamiania programów w MPI, pięć procesów
     
-    $ mpirun -np 5 ./program.exe
+    $ mpirun -np 5 ./main
+	$ mpirun --hostfile machines -np 5 ./main
 
 Najczęstsze błędy:
 
