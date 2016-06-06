@@ -1,0 +1,61 @@
+Małgorzata Fądziel 117300
+Przemysław Rydzyk 109697
+
+Sprawozdanie z Przetwarzania Rozproszonego
+    
+1. Opis problemu.
+
+    Założenia:
+    W systemie istnieje N + 1 procesów (N feministek + 1 organizacja mizoginów).
+    Parametr k określa maksymalną liczbę mizoginów (jest ona losowana).
+    Istnieją trzy lokalizacje, w których mogą odbywać się prelekcje.
+    Spotkanie kończy się bez względu na liczbę przybyłych feministek. 
+    
+    Organizacja mizoginów:
+    1. ustalenie liczby uczestników (od 1 do k) i lokalizacji oraz czasu oczekiwania
+    2. odczekanie 15-45 sekund
+    3. broadcast z informacją o prelekcji
+    4. powrót do punktu 1.
+    
+    Feministka:
+    1. Wylosowanie nowej lokalizacji.
+    
+    2. Rozesłanie wiadomości do wszystkich.
+        w wiadomości wysyłane są: wartość zegara Lamporta i ID nowej lokalizacji.
+    
+    3. odebranie wiadomości od wszystkich feministek, które mają nową lokalizację;
+        ustalenie własnej pozycji w kolejce na podstawie odebranych wiadomości i posiadanej obecnie o pozostałych procesach wiedzy.
+    
+    4. odebranie wiadomości o spotkaniu od organizacji mizoginów. 
+        Sprawdzenie, czy prelekcja jest w tej samej lokalizacji, co dana femienistka.
+        
+            Jeśli nie: oczekiwanie bez zmiany lokalizacji.
+            Jeśli tak: następuje sprawdzenie, czy ilość mizoginów na prelekcji jest mniejsza niż pozycja w kolejce danej feministki.
+             
+                 Jeśli tak: bierze udział w rozgonieniu prelekcji. Powrót do punktu 1.
+                 Jeśli nie: oczekiwanie bez zmiany lokalizacji.
+                
+    5. Powrót do punktu 3.
+        
+        
+2. Założenia przyjęte odnośnie środowiska komunikacyjnego.
+
+    - kanały FIFO
+    - kanały niezawodne
+    - założyliśmy, że w kanale zmieści się N-1 wiadomości
+    
+3. Złożoności komunikacyjne i czasowe.
+
+    Maksymalna złożoność komunikacyjna jednego przebiegu algorytmu wynosi 2N+1:
+        N wiadomości wysyłają zawsze procesy feministek biorących udział w prelekcji, a 1 wiadomość wysyłają mizogini.
+        Dodatkowo doliczyć trzeba N wiadomości wysłanych przez feministki na samym początku algorytmu.
+        
+    Średnia złożoność komunikacyjna jednego przebiegu algorytmu to N+(N/3)+1:
+        Zakładamy, że rozkład liczby feministek w kolejkach jest równomierny. 
+        
+        
+    Złożoność czasowa nie zależy od liczby procesów.
+        Zakładamy, że czas przetwarzania lokalnego jest pomijalny, a każda komunikacja zajmuje 1.
+        Maksymalna złożoność czasowa jest wówczas równa 3. 
+        
+    
